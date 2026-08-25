@@ -1,1 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wessy Owner Panel</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<main>
+  <h1>👑 Wessy Owner Panel</h1>
+
+  <section id="gate">
+    <p id="state">Sign in with your owner Google account.</p>
+    <button id="login">Sign in with Google</button>
+  </section>
+
+  <section id="pw-gate" hidden>
+    <p>Google account verified ✅ Enter the owner password to continue.</p>
+    <input type="password" id="pw-input" placeholder="Owner password" autocomplete="current-password">
+    <button id="pw-submit">Unlock Dashboard</button>
+    <p id="pw-error" class="error hidden">Wrong password.</p>
+  </section>
+
+  <section id="panel" hidden>
+    <div class="topbar">
+      <span id="who"></span>
+      <button id="logout">Sign out</button>
+    </div>
+
+    <div class="notice">
+      🔒 Owner access requires both an allowed Google account and the owner password.
+    </div>
+
+    <div class="card">
+      <h2>Base Sensitivity Values</h2>
+      <p class="hint">Starting values before RAM, brand, model, style, preference and finger adjustments.</p>
+      <div class="grid6" id="base-grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>RAM Adjustments</h2>
+      <p class="hint">A number added to every sensitivity value for each RAM group.</p>
+      <div class="grid4" id="ram-grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>Phone Brands</h2>
+      <p class="hint">Manage the public dropdown and its overall adjustment.</p>
+      <div id="brands-list"></div>
+      <div class="row-add two">
+        <input id="brand-new" placeholder="Brand name">
+        <input id="brand-adj" type="number" value="0" placeholder="Adjustment">
+        <button id="brand-add">Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Exact Phone Models</h2>
+      <p class="hint">Optional model-specific tuning. Example: Samsung Galaxy A15 +0.</p>
+      <div id="models-list"></div>
+      <div class="model-add">
+        <input id="model-name" placeholder="Phone model">
+        <select id="model-brand"></select>
+        <input id="model-adj" type="number" value="0" placeholder="Adjustment">
+        <button id="model-add">Add model</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Wessy Tips</h2>
+      <p class="hint">Shown after generating, based on gaming style.</p>
+      <label>Rusher tip</label>
+      <textarea id="tip-rusher"></textarea>
+      <label>Sniper tip</label>
+      <textarea id="tip-sniper"></textarea>
+      <label>Balanced tip</label>
+      <textarea id="tip-balanced"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>Wessy AI Chat Replies</h2>
+      <p class="hint">Rule-based replies matched against keywords.</p>
+      <div id="replies-list"></div>
+      <div class="reply-add">
+        <input id="reply-keywords" placeholder="keywords, comma separated">
+        <textarea id="reply-text" placeholder="Wessy's reply"></textarea>
+        <button id="reply-add">Add reply</button>
+      </div>
+    </div>
+
+    <button id="save" class="save-btn">💾 Save All Changes to Live Site</button>
+    <p id="save-status"></p>
+  </section>
+</main>
+<script type="module" src="admin.js"></script>
+</body>
+  </html>
 
