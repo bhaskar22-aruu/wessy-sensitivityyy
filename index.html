@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wessy Sensitivity — Free Fire Sensitivity Generator</title>
+<meta name="description" content="Wessy Sensitivity generates personalized Free Fire sensitivity settings based on your phone, RAM, playstyle and finger setup. Free, fast, no login needed.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://wessysensitivity.web.app/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <nav>
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="12" stroke="#FF6A3D" stroke-width="2"/>
+        <circle cx="14" cy="14" r="3" fill="#2DE1C2"/>
+        <line x1="14" y1="1" x2="14" y2="7" stroke="#FF6A3D" stroke-width="2"/>
+        <line x1="14" y1="21" x2="14" y2="27" stroke="#FF6A3D" stroke-width="2"/>
+      </svg>
+      <span>WESSY SENSITIVITY</span>
+    </div>
+    <span class="version-tag">v1.5</span>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="eyebrow">Free Fire Sensitivity Generator</span>
+    <h1>Stop guessing.<br>Start <span>headshotting.</span></h1>
+    <p>Tell Wessy about your phone and how you play — get a full sensitivity setup tuned for that exact combo.</p>
+
+    <div class="reticle-stage" aria-hidden="true">
+      <svg viewBox="0 0 220 220">
+        <circle id="ring-outer" cx="110" cy="110" r="70" stroke="#2DE1C2" stroke-width="1.5" fill="none" opacity="0.5"/>
+        <circle id="ring-inner" cx="110" cy="110" r="40" stroke="#FF6A3D" stroke-width="2" fill="none"/>
+        <line id="cross-h" x1="60" y1="110" x2="160" y2="110" stroke="#E8EAED" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <line id="cross-v" x1="110" y1="60" x2="110" y2="160" stroke="#E8EAED" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <circle cx="110" cy="110" r="2.5" fill="#FF6A3D"/>
+      </svg>
+    </div>
+    <p class="reticle-label" id="reticle-label">idle reticle · generate to calibrate</p>
+  </section>
+
+  <section id="generator-section">
+    <div class="section-head">
+      <span class="eyebrow">Wessy Recommendation</span>
+      <h2>Build your setup</h2>
+    </div>
+
+    <form class="generator" id="gen-form">
+      <div class="gen-field">
+        <div class="gen-field-label"><span class="gen-field-num">1</span><h3>Phone brand</h3></div>
+        <select id="brand" required>
+          <option value="" disabled selected>Select your brand</option>
+        </select>
+      </div>
+
+      <div class="gen-field">
+        <div class="gen-field-label"><span class="gen-field-num">2</span><h3>RAM</h3></div>
+        <select id="ram" required>
+          <option value="4">4 GB</option>
+          <option value="6">6 GB</option>
+          <option value="8" selected>8 GB</option>
+          <option value="12">12 GB or more</option>
+        </select>
+      </div>
+
+      <div class="gen-field">
+        <div class="gen-field-label"><span class="gen-field-num">3</span><h3>Phone model</h3></div>
+        <input type="text" id="model" placeholder="Example: Samsung Galaxy A15">
+      </div>
+
+      <div class="gen-field">
+        <div class="gen-field-label"><span class="gen-field-num">4</span><h3>Preference</h3></div>
+        <select id="pref">
+          <option value="headshot">Headshot / Drag</option>
+          <option value="balanced">Balanced Aim</option>
+          <option value="stable">Stable Control</option>
+        </select>
+      </div>
+
+      <div class="gen-field">
+        <div class="gen-field-label"><span class="gen-field-num">5</span><h3>Gaming style</h3></div>
+        <div class="option-grid" role="radiogroup">
+          <div class="option-card"><input type="radio" name="style" id="style-rush" value="rusher" checked><label for="style-rush">🔥 Rusher</label></div>
+          <div class="option-card"><input type="radio" name="style" id="style-bal" value="balanced"><label for="style-bal">⚡ Balanced</label></div>
+          <div class="option-card"><input type="radio" name="style" id="style-snipe" value="sniper"><label for="style-snipe">🎯 Sniper</label></div>
+        </div>
+      </div>
+
+      <div class="gen-field">
+        <div class="gen-field-label"><span class="gen-field-num">6</span><h3>Finger setup</h3></div>
+        <div class="option-grid" role="radiogroup">
+          <div class="option-card"><input type="radio" name="finger" id="f2" value="2"><label for="f2">2 Finger</label></div>
+          <div class="option-card"><input type="radio" name="finger" id="f3" value="3" checked><label for="f3">3 Finger</label></div>
+          <div class="option-card"><input type="radio" name="finger" id="f4" value="4"><label for="f4">4 Finger</label></div>
+        </div>
+      </div>
+
+      <div class="generate-btn-wrap">
+        <button type="submit" class="generate-btn">😊 Ask Wessy to Analyze My Setup</button>
+        <button type="button" class="reset-btn" id="reset">Reset</button>
+        <p class="form-hint">Takes 2 seconds · no sign-up needed</p>
+      </div>
+    </form>
+
+    <div id="loading" class="hidden"><div class="loader">🤖 Wessy is analyzing your setup<span class="dots"></span></div></div>
+
+    <div id="results" class="hidden">
+      <div class="result-panel">
+        <div class="result-head">
+          <h3>😊 Wessy Recommendation</h3>
+          <span class="result-tagline mono" id="score">-- % Wessy Match</span>
+        </div>
+
+        <div class="stat-row"><span class="stat-label">General</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-general"></div></div><span class="stat-value mono" id="val-general">0</span></div>
+        <div class="stat-row"><span class="stat-label">Red Dot</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-reddot"></div></div><span class="stat-value mono" id="val-reddot">0</span></div>
+        <div class="stat-row"><span class="stat-label">2x Scope</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-2x"></div></div><span class="stat-value mono" id="val-2x">0</span></div>
+        <div class="stat-row"><span class="stat-label">4x Scope</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-4x"></div></div><span class="stat-value mono" id="val-4x">0</span></div>
+        <div class="stat-row"><span class="stat-label">Sniper Scope</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-sniper"></div></div><span class="stat-value mono" id="val-sniper">0</span></div>
+        <div class="stat-row"><span class="stat-label">Free Look</span><div class="stat-bar-track"><div class="stat-bar-fill" id="bar-freelook"></div></div><span class="stat-value mono" id="val-freelook">0</span></div>
+
+        <div class="tips-box">
+          <h4>Wessy Analysis</h4>
+          <p id="analysis"></p>
+        </div>
+        <div class="tips-box">
+          <h4>Quick Tip</h4>
+          <p id="tip"></p>
+        </div>
+
+        <div class="chat-box">
+          <input id="question" placeholder="Ask Wessy about aim, drag, headshots or HUD">
+          <button id="ask">Ask</button>
+        </div>
+        <p class="reply hidden" id="reply"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="section-head">
+      <span class="eyebrow">What's next</span>
+      <h2>Wessy keeps upgrading</h2>
+    </div>
+    <div class="roadmap-strip">
+      <div class="rmap-chip active"><span class="v">v1.5</span><h4>Foundation</h4><p>You're here — the generator.</p></div>
+      <div class="rmap-chip"><span class="v">v2.5</span><h4>Smart Upgrade</h4><p>Better tuning, more detail.</p></div>
+      <div class="rmap-chip"><span class="v">v3.5</span><h4>Meet Wessy</h4><p>Real AI, ask it anything.</p></div>
+      <div class="rmap-chip"><span class="v">v4.5</span><h4>Beyond Free Fire</h4><p>COD Mobile, BGMI, iPhone.</p></div>
+      <div class="rmap-chip"><span class="v">v5.5</span><h4>Custom HUD</h4><p>Layouts built for your setup.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><span class="mono">WESSY SENSITIVITY</span> — built for players, one version at a time.</p>
+  <a class="owner-link" href="admin/">Owner Login</a>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

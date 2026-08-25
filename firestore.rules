@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+          "bhaskar843120@gmail.com",
+          "bhaskarthakur480@gmail.com"
+        ];
+    }
+
+    // Public website may read the live Wessy configuration.
+    // Only the two allowed owner Google accounts may create/update/delete it.
+    match /config/site {
+      allow read: if true;
+      allow create, update, delete: if isOwner();
+    }
+
+    // Everything else is private by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
