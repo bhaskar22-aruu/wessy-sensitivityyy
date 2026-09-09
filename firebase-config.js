@@ -1,6 +1,6 @@
 export const firebaseConfig = {
   apiKey: "AIzaSyDxaC5hESZV_R2YcYKN1GEMx3ju70Pv838",
-  authDomain: "wessy-sensitivity.firebaseapp.com",
+  authDomain:"wessy-sensitivity-85b59.firebaseapp.com",
   projectId: "wessy-sensitivity",
   storageBucket: "wessy-sensitivity.firebasestorage.app",
   messagingSenderId: "97999057231",
