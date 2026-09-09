@@ -1,5 +1,2 @@
-// Run tools/set-password.html in your browser, generate your code, and paste
-// the two lines it gives you here, replacing the placeholders below.
-export const ADMIN_PASSWORD_SALT = "PASTE_HERE";
-export const ADMIN_PASSWORD_HASH = "PASTE_HERE";
-
+export const ADMIN_PASSWORD_SALT = "897d790b961c53367ef1c1020cd08034";
+export const ADMIN_PASSWORD_HASH = "dc1e5885095b92c33731ed2d4ba078547033b23712e0830181ec1b344490adcd";
