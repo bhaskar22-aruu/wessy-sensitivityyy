@@ -1,7 +1,3 @@
-// Wessy Sensitivity Firebase configuration
-// Firebase web API keys are public project identifiers, not admin passwords.
-// Real admin protection is enforced by Firebase Authentication + Firestore Rules.
-
 export const firebaseConfig = {
   apiKey: "AIzaSyDxaC5hESZV_R2YcYKN1GEMx3ju70Pv838",
   authDomain: "wessy-sensitivity.firebaseapp.com",
@@ -12,9 +8,6 @@ export const firebaseConfig = {
   measurementId: "G-HELBLQSK92"
 };
 
-// Only these accounts may use the owner panel.
-// Firestore rules below are the actual security boundary.
 export const OWNER_EMAILS = [
-  "bhaskar843120@gmail.com",
-  "bhaskarthakur480@gmail.com"
+  "wessystudio.official@gmail.com"
 ];
