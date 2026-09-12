@@ -201,11 +201,31 @@ function initUI() {
     $('question').value = '';
   });
 
-  $('ask').addEventListener('click', () => {
-    $('reply').textContent = `😊 Wessy: ${wessyReply($('question').value)}`;
-    $('reply').classList.remove('hidden');
-    $('question').value = '';
-  });
+  $('ask').addEventListener('click', async () => {
+  const question = $('question').value.trim();
+  if (!question) return;
+
+  $('reply').textContent = `😊 Wessy is thinking...`;
+  $('reply').classList.remove('hidden');
+  $('question').value = '';
+
+  try {
+    const res = await fetch('/api/wessy-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: question })
+    });
+    const data = await res.json();
+
+    if (data.reply) {
+      $('reply').textContent = `😊 Wessy: ${data.reply}`;
+    } else {
+      $('reply').textContent = `😊 Wessy: ${wessyReply(question)}`;
+    }
+  } catch (err) {
+    $('reply').textContent = `😊 Wessy: ${wessyReply(question)}`;
+  }
+});
 
   $('question').addEventListener('keydown', e => {
     if (e.key === 'Enter') {
