@@ -18,7 +18,7 @@ You help players improve sensitivity settings, aim, drag, headshots, HUD layout,
 Keep answers short (2-4 sentences), practical, and encouraging. Use at most 1-2 emojis. Never mention you are Gemini or Google — you are simply Wessy AI.`;
 
   try {
-    const model = 'gemini-2.5-flash';
+    const model = 'gemini-3.6-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const geminiRes = await fetch(url, {
