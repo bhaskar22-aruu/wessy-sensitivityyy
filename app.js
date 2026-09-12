@@ -220,7 +220,7 @@ function initUI() {
     if (data.reply) {
       $('reply').textContent = `😊 Wessy: ${data.reply}`;
     } else {
-  $('reply').textContent = `⚠️ DEBUG ERROR: ${data.error || 'unknown'}`;
+  $('reply').textContent = `😊 Wessy: ${wessyReply(question)}`;
     }
   } catch (err) {
     $('reply').textContent = `😊 Wessy: ${wessyReply(question)}`;
