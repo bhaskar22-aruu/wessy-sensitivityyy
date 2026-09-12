@@ -213,7 +213,7 @@ function initUI() {
     const res = await fetch('/api/wessy-ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: question })
+      body: JSON.stringify({ message: question, context: current || null })
     });
     const data = await res.json();
 
