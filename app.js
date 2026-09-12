@@ -205,26 +205,35 @@ function initUI() {
   const question = $('question').value.trim();
   if (!question) return;
 
-  $('reply').textContent = `😊 Wessy is thinking...`;
-  $('reply').classList.remove('hidden');
-  $('question').value = '';
+  const chatBox = $('chat-messages');
 
-  try {
-    const res = await fetch('/api/wessy-ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: question, context: current || null })
-    });
-    const data = await res.json();
+    const userBubble = document.createElement('div');
+    userBubble.className = 'chat-msg user';
+    userBubble.textContent = question;
+    chatBox.appendChild(userBubble);
 
-    if (data.reply) {
-      $('reply').textContent = `😊 Wessy: ${data.reply}`;
-    } else {
-  $('reply').textContent = `😊 Wessy: ${wessyReply(question)}`;
+    const thinkingBubble = document.createElement('div');
+    thinkingBubble.className = 'chat-msg ai thinking';
+    thinkingBubble.textContent = '😊 Wessy is thinking...';
+    chatBox.appendChild(thinkingBubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+      const res = await fetch('/api/wessy-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: question, context: current || null })
+      });
+      const data = await res.json();
+
+      thinkingBubble.classList.remove('thinking');
+      thinkingBubble.textContent = `😊 ${data.reply || wessyReply(question)}`;
+    } catch (err) {
+      thinkingBubble.classList.remove('thinking');
+      thinkingBubble.textContent = `😊 ${wessyReply(question)}`;
     }
-  } catch (err) {
-    $('reply').textContent = `😊 Wessy: ${wessyReply(question)}`;
-  }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
 });
 
   $('question').addEventListener('keydown', e => {
