@@ -3,13 +3,21 @@
     {
       "source": "/(.*).css",
       "headers": [
-        { "key": "Content-Type", "value": "text/css; charset=utf-8" }
+        { "key": "Content-Type", "value": "text/css; charset=utf-8" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
     },
     {
       "source": "/(.*).js",
       "headers": [
-        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/(.*).html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
     }
   ]
