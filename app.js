@@ -211,6 +211,7 @@ function initUI() {
     userBubble.className = 'chat-msg user';
     userBubble.textContent = question;
     chatBox.appendChild(userBubble);
+    $('question').value = '';
 
     const thinkingBubble = document.createElement('div');
     thinkingBubble.className = 'chat-msg ai thinking';
