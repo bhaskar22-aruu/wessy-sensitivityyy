@@ -140,7 +140,7 @@ function showPasswordGate(email) {
 }
 
 async function openDashboard() {
-  if (!$('panel').hidden === false) return;
+  if ($('panel').hidden === false) return;
   try {
     await window.__wessyLoadConfig();
     $('pw-gate').hidden = true;
