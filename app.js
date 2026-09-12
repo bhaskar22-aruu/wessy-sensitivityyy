@@ -228,10 +228,10 @@ function initUI() {
       const data = await res.json();
 
       thinkingBubble.classList.remove('thinking');
-      thinkingBubble.textContent = data.reply || `⚠️ DEBUG: ${data.error || 'no reply field'}`;
+      thinkingBubble.textContent = `😊 ${data.reply || wessyReply(question)}`;
     } catch (err) {
       thinkingBubble.classList.remove('thinking');
-      thinkingBubble.textContent = `⚠️ DEBUG CATCH: ${err.message}`;
+      thinkingBubble.textContent = `😊 ${wessyReply(question)}`;
     }
 
     chatBox.scrollTop = chatBox.scrollHeight;
