@@ -179,6 +179,16 @@ footer .mono{color:var(--teal);}
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important; scroll-behavior:auto !important;}
 }
+.chat-section-title{
+  margin-top:24px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  font-size:0.8rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--muted);
+  font-weight:600;
+}
 .chat-box{
   display:flex;
   align-items:center;
