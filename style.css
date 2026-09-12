@@ -179,3 +179,38 @@ footer .mono{color:var(--teal);}
 @media (prefers-reduced-motion: reduce){
   *{transition:none !important; scroll-behavior:auto !important;}
 }
+.chat-messages{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:340px;
+  overflow-y:auto;
+  margin-top:18px;
+  padding-right:4px;
+}
+.chat-messages:empty{display:none;}
+.chat-msg{
+  padding:10px 14px;
+  border-radius:12px;
+  font-size:0.88rem;
+  line-height:1.5;
+  max-width:88%;
+  word-wrap:break-word;
+}
+.chat-msg.user{
+  align-self:flex-end;
+  background:var(--ember);
+  color:#14171C;
+  font-weight:500;
+  border-bottom-right-radius:4px;
+}
+.chat-msg.ai{
+  align-self:flex-start;
+  background:var(--panel-hi);
+  color:var(--ash);
+  border-bottom-left-radius:4px;
+}
+.chat-msg.ai.thinking{
+  color:var(--muted);
+  font-style:italic;
+}
