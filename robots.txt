@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /tools/
 
-Sitemap: https://wessysensitivity.web.app/sitemap.xml
+Sitemap: https://wessy-sensitivityyy.vercel.app/sitemap.xml
