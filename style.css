@@ -262,3 +262,16 @@ footer .mono{color:var(--teal);}
   color:var(--muted);
   font-style:italic;
 }
+.credit{
+  font-size:0.78rem;
+  color:var(--muted);
+  margin-top:6px;
+}
+.credit a{
+  color:var(--teal);
+  text-decoration:none;
+  font-weight:600;
+}
+.credit a:hover{
+  text-decoration:underline;
+}
