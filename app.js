@@ -250,8 +250,10 @@ function initUI() {
           freelook: current.v.freelook
         }
       }
-    : null
+        : null
 })
+      });
+
       const data = await res.json();
 
 thinkingBubble.classList.remove('thinking');
