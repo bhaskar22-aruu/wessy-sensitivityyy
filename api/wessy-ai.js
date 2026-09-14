@@ -246,62 +246,155 @@ function buildGeminiContents(history, message) {
   ];
 }
 
+function formatSensitivity(context) {
+  if (!context?.v) {
+    return null;
+  }
+
+  return (
+    `General ${context.v.general}, ` +
+    `Red Dot ${context.v.reddot}, ` +
+    `2x ${context.v.x2}, ` +
+    `4x ${context.v.x4}, ` +
+    `Sniper ${context.v.sniper}, ` +
+    `Free Look ${context.v.freelook}`
+  );
+}
+
 function smartFallback(message, context, knowledge) {
   const q = message.toLowerCase().trim();
 
+  const hasSensitivity =
+    /(sensitivity|sens|general|red dot|reddot|2x|4x|sniper|free look|freelook)/.test(q);
+
+  const asksCurrentSensitivity =
+    /(current|meri|mera|mere|my|mine|abhi|currently).*(sensitivity|sens)|(sensitivity|sens).*(current|meri|mera|mere|my|mine|abhi|currently)/.test(q);
+
+  const asksPhone =
+    /(phone|mobile|device|model)/.test(q);
+
+  const hasAimTopic =
+    /(aim|drag|headshot|hud|scope|gameplay|control|setting|setup)/.test(q);
+
+  /*
+   * Greetings
+   */
   if (
     /^(hi|hello|hey|hii|helo|namaste|yo)\b/.test(q)
   ) {
-    return 'Hey! 😊 I’m Wessy. Ask me about your sensitivity, aim, drag, HUD, scopes or your current setup.';
+    return (
+      'Hey! 😊 I’m Wessy. Ask me about your sensitivity, ' +
+      'aim, drag, HUD, scopes or your current setup.'
+    );
   }
 
-  if (
-    /(phone|mobile|device|model)/.test(q)
-  ) {
+  /*
+   * IMPORTANT:
+   * Sensitivity checks come BEFORE phone checks.
+   *
+   * This allows questions like:
+   * "Red Dot kitna hai mere phone ke liye?"
+   * to be handled as sensitivity questions instead
+   * of returning only the phone profile.
+   */
+
+  if (asksCurrentSensitivity && context?.v) {
+    return (
+      `Your current Wessy sensitivity is: ` +
+      `${formatSensitivity(context)}. 🎯`
+    );
+  }
+
+  /*
+   * Mixed sensitivity + phone questions
+   */
+  if (hasSensitivity && context?.v) {
+    const phoneName =
+      context.model ||
+      context.brand ||
+      'your phone';
+
+    if (/red dot|reddot/.test(q)) {
+      return (
+        `Your current Red Dot is ${context.v.reddot}. ` +
+        `For ${phoneName}, this is your current Wessy value. ` +
+        `If your aim feels too fast or too slow, test small adjustments. 🎯`
+      );
+    }
+
+    if (/\b2x\b/.test(q)) {
+      return (
+        `Your current 2x sensitivity is ${context.v.x2} ` +
+        `for ${phoneName}. 🎯`
+      );
+    }
+
+    if (/\b4x\b/.test(q)) {
+      return (
+        `Your current 4x sensitivity is ${context.v.x4} ` +
+        `for ${phoneName}. 🎯`
+      );
+    }
+
+    if (/sniper/.test(q)) {
+      return (
+        `Your current Sniper sensitivity is ${context.v.sniper} ` +
+        `for ${phoneName}. 🎯`
+      );
+    }
+
+    if (/free look|freelook/.test(q)) {
+      return (
+        `Your current Free Look sensitivity is ${context.v.freelook} ` +
+        `for ${phoneName}. 🎯`
+      );
+    }
+
+    if (/general/.test(q)) {
+      return (
+        `Your current General sensitivity is ${context.v.general} ` +
+        `for ${phoneName}. 🎯`
+      );
+    }
+
+    return (
+      `I have your current Wessy sensitivity for ${phoneName}: ` +
+      `${formatSensitivity(context)}. 🎯`
+    );
+  }
+
+  /*
+   * General sensitivity question without current values
+   */
+  if (hasSensitivity && !context?.v) {
+    return (
+      'Generate your Wessy profile first so I can give advice ' +
+      'based on your actual sensitivity.'
+    );
+  }
+
+  /*
+   * Phone/device question
+   */
+  if (asksPhone) {
     if (context?.model) {
-      return `Your current Wessy profile is for ${context.model}${context.brand ? ` (${context.brand})` : ''}${context.ram ? ` with ${context.ram} GB RAM` : ''}. 📱`;
-    }
-
-    return 'Analyze your phone setup first, and I’ll be able to use your device details.';
-  }
-
-  if (
-    /(current|meri|my|mine).*(sensitivity|sens)|(sensitivity|sens).*(current|meri|my|mine)/.test(q)
-  ) {
-    if (context?.v) {
       return (
-        `Your current Wessy sensitivity is: ` +
-        `General ${context.v.general}, ` +
-        `Red Dot ${context.v.reddot}, ` +
-        `2x ${context.v.x2}, ` +
-        `4x ${context.v.x4}, ` +
-        `Sniper ${context.v.sniper}, ` +
-        `Free Look ${context.v.freelook}. 🎯`
+        `Your current Wessy profile is for ` +
+        `${context.model}` +
+        `${context.brand ? ` (${context.brand})` : ''}` +
+        `${context.ram ? ` with ${context.ram} GB RAM` : ''}. 📱`
       );
     }
 
-    return 'Generate your Wessy sensitivity profile first, then I can read your current values.';
+    return (
+      'Analyze your phone setup first, and I’ll be able ' +
+      'to use your device details.'
+    );
   }
 
-  if (
-    /(general|red dot|reddot|2x|4x|sniper|freelook|sensitivity|sens)/.test(q)
-  ) {
-    if (context?.v) {
-      return (
-        `I have your current profile. ` +
-        `General is ${context.v.general}, ` +
-        `Red Dot is ${context.v.reddot}, ` +
-        `2x is ${context.v.x2}, ` +
-        `4x is ${context.v.x4}, ` +
-        `Sniper is ${context.v.sniper}, ` +
-        `and Free Look is ${context.v.freelook}. ` +
-        `For changes, test one value at a time. 🎯`
-      );
-    }
-
-    return 'Generate your Wessy profile first so I can give advice based on your actual sensitivity.';
-  }
-
+  /*
+   * Wessy knowledge
+   */
   const relevantKnowledge = knowledge.find(item => {
     const topic = item.topic.toLowerCase();
 
@@ -317,15 +410,33 @@ function smartFallback(message, context, knowledge) {
     return relevantKnowledge.information;
   }
 
+  /*
+   * Device-aware generic answer
+   */
+  if (context && hasAimTopic) {
+    return (
+      `I’m using your current Wessy profile for ` +
+      `${context.model || context.brand || 'your device'}` +
+      `${context.ram ? ` with ${context.ram} GB RAM` : ''}. ` +
+      `Ask me about a specific sensitivity, aim, drag, ` +
+      `HUD or scope setting and I’ll use your current profile. 🎮`
+    );
+  }
+
   if (context) {
     return (
       `I’m currently using your Wessy profile for ` +
       `${context.model || context.brand || 'your device'}. ` +
-      `Try asking me specifically about your sensitivity, aim, drag or scopes. 🎮`
+      `Try asking me specifically about your sensitivity, ` +
+      `aim, drag or scopes. 🎮`
     );
   }
 
-  return 'I’m Wessy, your gaming sensitivity assistant. Ask me about sensitivity, aim, drag, headshots, HUD, scopes or your setup. 🎮';
+  return (
+    'I’m Wessy, your gaming sensitivity assistant. ' +
+    'Ask me about sensitivity, aim, drag, headshots, ' +
+    'HUD, scopes or your setup. 🎮'
+  );
 }
 
 export default async function handler(req, res) {
@@ -335,8 +446,11 @@ export default async function handler(req, res) {
     });
   }
 
-  const { message, context, history } =
-    req.body || {};
+  const {
+    message,
+    context,
+    history
+  } = req.body || {};
 
   if (
     !message ||
@@ -355,8 +469,8 @@ export default async function handler(req, res) {
       process.env.GEMINI_API_KEY;
 
     /*
-     * If Gemini is unavailable or the API key is not configured,
-     * Wessy still gives a useful response using local context.
+     * If Gemini is unavailable or the API key
+     * is not configured, Wessy still works.
      */
     if (!apiKey) {
       return res.status(200).json({
@@ -394,168 +508,4 @@ You help Free Fire Max players with:
 SENSITIVITY RULES:
 
 1. Free Fire Max sensitivity uses a 0-200 scale.
-2. Never describe the scale as 0-100.
-3. When current sensitivity values are supplied,
-   use those exact values.
-4. Do not invent or randomly replace current values.
-5. For adjustments, explain what to change and why.
-6. Prefer practical, small adjustments and testing.
-
-DEVICE CONTEXT:
-
-The user may have entered their phone information
-on the Wessy Sensitivity website.
-
-Use the supplied phone brand, model, RAM,
-play style, preference, finger setup, score and
-generated sensitivity values.
-
-When the user says "my phone", "my sensitivity",
-"my setup", "this phone", or similar, use the
-provided website context.
-
-CONVERSATION:
-
-Previous messages may be supplied.
-
-Use them to understand follow-up questions naturally.
-
-For example:
-
-User: My sensitivity is good?
-Wessy: gives an answer.
-
-User: What about Red Dot?
-
-Understand that "Red Dot" refers to the previous
-sensitivity discussion.
-
-WESSY KNOWLEDGE:
-
-Owner-provided knowledge is supplied below.
-
-Use it naturally for Wessy-specific facts.
-
-Treat owner-provided Wessy knowledge as the source
-of truth for official Wessy-specific information.
-
-If an official Wessy fact is not present there,
-do not invent one.
-
-STYLE:
-
-- Be natural and conversational.
-- Understand meaning, not just keywords.
-- Keep most answers concise.
-- Give useful practical advice.
-- Use simple language.
-- Use at most 1-2 emojis.
-- Never mention Gemini or Google.
-- You are simply Wessy AI.
-
-${knowledgeContext}
-${deviceContext}
-`;
-
-    const model =
-      'gemini-3.6-flash';
-
-    const url =
-      `https://generativelanguage.googleapis.com/v1beta/models/` +
-      `${model}:generateContent?key=${apiKey}`;
-
-    const geminiRes =
-      await fetch(url, {
-        method: 'POST',
-
-        headers: {
-          'Content-Type':
-            'application/json'
-        },
-
-        body: JSON.stringify({
-          system_instruction: {
-            parts: [
-              {
-                text: systemPrompt
-              }
-            ]
-          },
-
-          contents:
-            buildGeminiContents(
-              history,
-              message
-            )
-        })
-      });
-
-    const data =
-      await geminiRes.json();
-
-    /*
-     * Quota, rate-limit, model or other Gemini errors
-     * no longer reach the user as technical errors.
-     */
-    if (!geminiRes.ok) {
-      console.warn(
-        'Gemini unavailable:',
-        data?.error?.message ||
-        geminiRes.status
-      );
-
-      return res.status(200).json({
-        reply: smartFallback(
-          message,
-          context,
-          knowledge
-        )
-      });
-    }
-
-    const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-
-    if (!reply) {
-      return res.status(200).json({
-        reply: smartFallback(
-          message,
-          context,
-          knowledge
-        )
-      });
-    }
-
-    return res.status(200).json({
-      reply
-    });
-
-  } catch (error) {
-    console.warn(
-      'Wessy AI request failed:',
-      error.message
-    );
-
-    /*
-     * Never expose backend/API errors to users.
-     */
-    try {
-      const knowledge =
-        await loadWessyKnowledge();
-
-      return res.status(200).json({
-        reply: smartFallback(
-          message,
-          context,
-          knowledge
-        )
-      });
-
-    } catch {
-      return res.status(200).json({
-        reply:
-          'I’m Wessy. Try asking me about your sensitivity, aim, drag or current setup. 🎮'
-      });
-    }
-  }
-}
+2.
