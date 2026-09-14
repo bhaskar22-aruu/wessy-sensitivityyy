@@ -508,4 +508,173 @@ You help Free Fire Max players with:
 SENSITIVITY RULES:
 
 1. Free Fire Max sensitivity uses a 0-200 scale.
-2.
+2. Never describe the scale as 0-100.
+3. When current sensitivity values are supplied,
+   use those exact values.
+4. Never invent or randomly replace current values.
+5. For adjustments, explain what to change and why.
+6. Prefer practical, small adjustments and testing.
+
+DEVICE CONTEXT:
+
+The user may have entered their phone information
+on the Wessy Sensitivity website.
+
+Use the supplied phone brand, model, RAM,
+play style, preference, finger setup, score and
+generated sensitivity values.
+
+When the user says "my phone", "my sensitivity",
+"my setup", "this phone", or similar, use the
+provided website context.
+
+CONVERSATION:
+
+Previous messages may be supplied.
+
+Use them to understand follow-up questions naturally.
+
+For example:
+
+User: My sensitivity is good?
+Wessy: gives an answer.
+
+User: What about Red Dot?
+
+Understand that "Red Dot" refers to the previous
+sensitivity discussion.
+
+If the current question contains both device words
+and sensitivity words, answer the actual sensitivity
+question using the device context rather than only
+describing the phone.
+
+WESSY KNOWLEDGE:
+
+Owner-provided knowledge is supplied below.
+
+Use it naturally for Wessy-specific facts.
+
+Treat owner-provided Wessy knowledge as the source
+of truth for official Wessy-specific information.
+
+If an official Wessy fact is not present there,
+do not invent one.
+
+STYLE:
+
+- Be natural and conversational.
+- Understand meaning, not just keywords.
+- Keep most answers concise.
+- Give useful practical advice.
+- Use simple language.
+- Use at most 1-2 emojis.
+- Never mention Gemini or Google.
+- You are simply Wessy AI.
+
+${knowledgeContext}
+${deviceContext}
+`;
+
+    const model =
+      'gemini-3.6-flash';
+
+    const url =
+      `https://generativelanguage.googleapis.com/v1beta/models/` +
+      `${model}:generateContent?key=${apiKey}`;
+
+    const geminiRes =
+      await fetch(url, {
+        method: 'POST',
+
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [
+              {
+                text: systemPrompt
+              }
+            ]
+          },
+
+          contents:
+            buildGeminiContents(
+              history,
+              message
+            )
+        })
+      });
+
+    const data =
+      await geminiRes.json();
+
+    /*
+     * Gemini errors, including quota/rate-limit errors,
+     * automatically use the local Wessy fallback.
+     */
+    if (!geminiRes.ok) {
+      console.warn(
+        'Gemini unavailable:',
+        data?.error?.message ||
+        geminiRes.status
+      );
+
+      return res.status(200).json({
+        reply: smartFallback(
+          message,
+          context,
+          knowledge
+        )
+      });
+    }
+
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (!reply) {
+      return res.status(200).json({
+        reply: smartFallback(
+          message,
+          context,
+          knowledge
+        )
+      });
+    }
+
+    return res.status(200).json({
+      reply
+    });
+
+  } catch (error) {
+    console.warn(
+      'Wessy AI request failed:',
+      error.message
+    );
+
+    /*
+     * Never expose backend/API errors to users.
+     */
+    try {
+      const knowledge =
+        await loadWessyKnowledge();
+
+      return res.status(200).json({
+        reply: smartFallback(
+          message,
+          context,
+          knowledge
+        )
+      });
+
+    } catch {
+      return res.status(200).json({
+        reply:
+          'I’m Wessy. Try asking me about your sensitivity, aim, drag or current setup. 🎮'
+      });
+    }
+  }
+}
