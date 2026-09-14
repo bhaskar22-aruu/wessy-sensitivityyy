@@ -264,136 +264,273 @@ function formatSensitivity(context) {
 function smartFallback(message, context, knowledge) {
   const q = message.toLowerCase().trim();
 
-  const hasSensitivity =
+  const values = context?.v || null;
+
+  const phone =
+    context?.model ||
+    context?.brand ||
+    'your phone';
+
+  const ram =
+    context?.ram
+      ? `${context.ram} GB RAM`
+      : '';
+
+  const hasSensitivityTopic =
     /(sensitivity|sens|general|red dot|reddot|2x|4x|sniper|free look|freelook)/.test(q);
 
-  const asksCurrentSensitivity =
-    /(current|meri|mera|mere|my|mine|abhi|currently).*(sensitivity|sens)|(sensitivity|sens).*(current|meri|mera|mere|my|mine|abhi|currently)/.test(q);
+  const asksCurrent =
+    /(current|meri|mera|mere|my|mine|abhi|currently|kitna|kitni|kya hai).*(sensitivity|sens|general|red dot|reddot|2x|4x|sniper|free look|freelook)|(sensitivity|sens|general|red dot|reddot|2x|4x|sniper|free look|freelook).*(current|meri|mera|mere|my|mine|abhi|currently|kitna|kitni|kya hai)/.test(q);
 
-  const asksPhone =
-    /(phone|mobile|device|model)/.test(q);
+  const feelsFast =
+    /(fast|zyada|high|tez|jaldi|overshoot|control nahi|control nhi|bahut tez)/.test(q);
 
-  const hasAimTopic =
-    /(aim|drag|headshot|hud|scope|gameplay|control|setting|setup)/.test(q);
+  const feelsSlow =
+    /(slow|kam|low|dheere|heavy|late|response nahi|response nhi)/.test(q);
+
+  const asksRedDot =
+    /(red dot|reddot)/.test(q);
+
+  const asksGeneral =
+    /\bgeneral\b/.test(q);
+
+  const asks2x =
+    /\b2x\b/.test(q);
+
+  const asks4x =
+    /\b4x\b/.test(q);
+
+  const asksSniper =
+    /\bsniper\b/.test(q);
+
+  const asksFreeLook =
+    /(free look|freelook)/.test(q);
 
   /*
-   * Greetings
+   * Greeting
    */
   if (
-    /^(hi|hello|hey|hii|helo|namaste|yo)\b/.test(q)
+    /^(hi|hello|hey|hii|helo|namaste|yo|hyy)\b/.test(q)
   ) {
     return (
-      'Hey! 😊 I’m Wessy. Ask me about your sensitivity, ' +
-      'aim, drag, HUD, scopes or your current setup.'
+      'Hey! 😊 I’m Wessy. ' +
+      'Batao, sensitivity, aim, drag, HUD ya tumhare current setup ke baare mein kya dekhna hai?'
     );
   }
 
   /*
-   * IMPORTANT:
-   * Sensitivity checks come BEFORE phone checks.
-   *
-   * This allows questions like:
-   * "Red Dot kitna hai mere phone ke liye?"
-   * to be handled as sensitivity questions instead
-   * of returning only the phone profile.
+   * Specific sensitivity problem:
+   * "Red Dot fast lag raha hai"
    */
+  if (
+    asksRedDot &&
+    (feelsFast || feelsSlow) &&
+    values
+  ) {
+    const current = Number(values.reddot);
 
-  if (asksCurrentSensitivity && context?.v) {
-    return (
-      `Your current Wessy sensitivity is: ` +
-      `${formatSensitivity(context)}. 🎯`
-    );
-  }
+    if (feelsFast) {
+      const suggested = Math.max(current - 5, 0);
 
-  /*
-   * Mixed sensitivity + phone questions
-   */
-  if (hasSensitivity && context?.v) {
-    const phoneName =
-      context.model ||
-      context.brand ||
-      'your phone';
-
-    if (/red dot|reddot/.test(q)) {
       return (
-        `Your current Red Dot is ${context.v.reddot}. ` +
-        `For ${phoneName}, this is your current Wessy value. ` +
-        `If your aim feels too fast or too slow, test small adjustments. 🎯`
+        `Haan, agar Red Dot ${current} tumhe fast feel ho raha hai, ` +
+        `to ${suggested} ke around try karo. ` +
+        `Tumhare ${phone}${ram ? ` (${ram})` : ''} par pehle 5 points ka change test karna better rahega. ` +
+        `Agar aim control improve ho, wahi value rakho. 🎯`
       );
     }
 
-    if (/\b2x\b/.test(q)) {
-      return (
-        `Your current 2x sensitivity is ${context.v.x2} ` +
-        `for ${phoneName}. 🎯`
-      );
-    }
-
-    if (/\b4x\b/.test(q)) {
-      return (
-        `Your current 4x sensitivity is ${context.v.x4} ` +
-        `for ${phoneName}. 🎯`
-      );
-    }
-
-    if (/sniper/.test(q)) {
-      return (
-        `Your current Sniper sensitivity is ${context.v.sniper} ` +
-        `for ${phoneName}. 🎯`
-      );
-    }
-
-    if (/free look|freelook/.test(q)) {
-      return (
-        `Your current Free Look sensitivity is ${context.v.freelook} ` +
-        `for ${phoneName}. 🎯`
-      );
-    }
-
-    if (/general/.test(q)) {
-      return (
-        `Your current General sensitivity is ${context.v.general} ` +
-        `for ${phoneName}. 🎯`
-      );
-    }
+    const suggested = Math.min(current + 5, 200);
 
     return (
-      `I have your current Wessy sensitivity for ${phoneName}: ` +
-      `${formatSensitivity(context)}. 🎯`
+      `Agar Red Dot ${current} tumhe slow feel ho raha hai, ` +
+      `${suggested} ke around try kar sakte ho. ` +
+      `Pehle small adjustment karo, phir aim ko test karo. 🎯`
     );
   }
 
   /*
-   * General sensitivity question without current values
+   * Specific General problem
    */
-  if (hasSensitivity && !context?.v) {
+  if (
+    asksGeneral &&
+    (feelsFast || feelsSlow) &&
+    values
+  ) {
+    const current = Number(values.general);
+
+    if (feelsFast) {
+      const suggested = Math.max(current - 5, 0);
+
+      return (
+        `General ${current} hai. Agar movement/aim fast feel ho raha hai, ` +
+        `${suggested} ke around test karo. ` +
+        `Ek saath bahut bada change mat karo. 🎯`
+      );
+    }
+
+    const suggested = Math.min(current + 5, 200);
+
     return (
-      'Generate your Wessy profile first so I can give advice ' +
-      'based on your actual sensitivity.'
+      `General ${current} hai. Agar response slow feel ho raha hai, ` +
+      `${suggested} ke around try karo aur phir gameplay me test karo. 🎯`
     );
   }
 
   /*
-   * Phone/device question
+   * Specific 2x problem
    */
-  if (asksPhone) {
+  if (
+    asks2x &&
+    (feelsFast || feelsSlow) &&
+    values
+  ) {
+    const current = Number(values.x2);
+
+    if (feelsFast) {
+      const suggested = Math.max(current - 5, 0);
+
+      return (
+        `2x sensitivity ${current} hai. Agar scope fast feel ho raha hai, ` +
+        `${suggested} ke around test karo. 🎯`
+      );
+    }
+
+    const suggested = Math.min(current + 5, 200);
+
+    return (
+      `2x sensitivity ${current} hai. Agar scope slow feel ho raha hai, ` +
+        `${suggested} ke around test karo. 🎯`
+    );
+  }
+
+  /*
+   * Specific 4x problem
+   */
+  if (
+    asks4x &&
+    (feelsFast || feelsSlow) &&
+    values
+  ) {
+    const current = Number(values.x4);
+
+    if (feelsFast) {
+      const suggested = Math.max(current - 5, 0);
+
+      return (
+        `4x sensitivity ${current} hai. Agar scope fast feel ho raha hai, ` +
+        `${suggested} ke around test karo. 🎯`
+      );
+    }
+
+    const suggested = Math.min(current + 5, 200);
+
+    return (
+      `4x sensitivity ${current} hai. Agar scope slow feel ho raha hai, ` +
+      `${suggested} ke around test karo. 🎯`
+    );
+  }
+
+  /*
+   * Current specific value
+   */
+  if (asksCurrent && values) {
+    if (asksRedDot) {
+      return (
+        `Tumhara current Red Dot ${values.reddot} hai. ` +
+        `Ye tumhare current Wessy profile ka value hai. 🎯`
+      );
+    }
+
+    if (asksGeneral) {
+      return (
+        `Tumhara current General ${values.general} hai. 🎯`
+      );
+    }
+
+    if (asks2x) {
+      return (
+        `Tumhara current 2x ${values.x2} hai. 🎯`
+      );
+    }
+
+    if (asks4x) {
+      return (
+        `Tumhara current 4x ${values.x4} hai. 🎯`
+      );
+    }
+
+    if (asksSniper) {
+      return (
+        `Tumhara current Sniper ${values.sniper} hai. 🎯`
+      );
+    }
+
+    if (asksFreeLook) {
+      return (
+        `Tumhara current Free Look ${values.freelook} hai. 🎯`
+      );
+    }
+
+    return (
+      `Tumhari current Wessy sensitivity hai: ` +
+      `General ${values.general}, ` +
+      `Red Dot ${values.reddot}, ` +
+      `2x ${values.x2}, ` +
+      `4x ${values.x4}, ` +
+      `Sniper ${values.sniper}, ` +
+      `Free Look ${values.freelook}. 🎯`
+    );
+  }
+
+  /*
+   * User asks about sensitivity but hasn't generated profile
+   */
+  if (
+    hasSensitivityTopic &&
+    !values
+  ) {
+    return (
+      'Pehle Wessy sensitivity profile generate kar lo. ' +
+      'Uske baad main tumhare actual values ke basis par advice de sakta hoon. 🎯'
+    );
+  }
+
+  /*
+   * Phone/device
+   */
+  if (
+    /(phone|mobile|device|model)/.test(q)
+  ) {
     if (context?.model) {
       return (
-        `Your current Wessy profile is for ` +
-        `${context.model}` +
+        `Tumhara current Wessy profile ${context.model}` +
         `${context.brand ? ` (${context.brand})` : ''}` +
-        `${context.ram ? ` with ${context.ram} GB RAM` : ''}. 📱`
+        `${context.ram ? ` with ${context.ram} GB RAM` : ''} ke liye hai. 📱`
       );
     }
 
     return (
-      'Analyze your phone setup first, and I’ll be able ' +
-      'to use your device details.'
+      'Pehle apna phone setup select karo, phir main uske context ke saath help karunga.'
     );
   }
 
   /*
-   * Wessy knowledge
+   * Aim / drag / HUD / gameplay
+   */
+  if (
+    /(aim|drag|headshot|hud|scope|gameplay|control|setup)/.test(q) &&
+    context
+  ) {
+    return (
+      `Main tumhara ${phone}${ram ? ` (${ram})` : ''} wala Wessy profile use kar raha hoon. ` +
+      `Agar kisi specific cheez me problem hai, jaise drag fast hai, aim slow hai ` +
+      `ya scope control nahi ho raha, woh batao. Main usi ke according suggest karunga. 🎮`
+    );
+  }
+
+  /*
+   * Wessy Knowledge Base
    */
   const relevantKnowledge = knowledge.find(item => {
     const topic = item.topic.toLowerCase();
@@ -411,31 +548,18 @@ function smartFallback(message, context, knowledge) {
   }
 
   /*
-   * Device-aware generic answer
+   * Context-aware fallback
    */
-  if (context && hasAimTopic) {
-    return (
-      `I’m using your current Wessy profile for ` +
-      `${context.model || context.brand || 'your device'}` +
-      `${context.ram ? ` with ${context.ram} GB RAM` : ''}. ` +
-      `Ask me about a specific sensitivity, aim, drag, ` +
-      `HUD or scope setting and I’ll use your current profile. 🎮`
-    );
-  }
-
   if (context) {
     return (
-      `I’m currently using your Wessy profile for ` +
-      `${context.model || context.brand || 'your device'}. ` +
-      `Try asking me specifically about your sensitivity, ` +
-      `aim, drag or scopes. 🎮`
+      `Got it. Main tumhare current ${phone} Wessy profile ko context me rakh raha hoon. ` +
+      `Jo problem aa rahi hai woh batao, main usi setup ke according help karunga. 🎮`
     );
   }
 
   return (
-    'I’m Wessy, your gaming sensitivity assistant. ' +
-    'Ask me about sensitivity, aim, drag, headshots, ' +
-    'HUD, scopes or your setup. 🎮'
+    'I’m Wessy, your gaming assistant. ' +
+    'Sensitivity, aim, drag, headshots, HUD, scopes ya setup ke baare mein poochho. 🎮'
   );
 }
 
