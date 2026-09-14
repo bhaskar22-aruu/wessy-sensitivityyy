@@ -252,11 +252,17 @@ function initUI() {
       }
     : null
 })
-      });
       const data = await res.json();
 
-      thinkingBubble.classList.remove('thinking');
-      thinkingBubble.textContent = `😊 ${data.reply || wessyReply(question)}`;
+thinkingBubble.classList.remove('thinking');
+
+if (!res.ok || data.error) {
+  thinkingBubble.textContent =
+    `❌ API Error: ${data.error || `HTTP ${res.status}`}`;
+} else {
+  thinkingBubble.textContent =
+    `😊 ${data.reply || 'Wessy ne empty response diya.'}`;
+}
     } catch (err) {
       thinkingBubble.classList.remove('thinking');
       thinkingBubble.textContent = `😊 ${wessyReply(question)}`;
