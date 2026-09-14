@@ -223,7 +223,35 @@ function initUI() {
       const res = await fetch('/api/wessy-ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: question, context: current || null })
+        body: JSON.stringify({
+  message: question,
+  context: current
+    ? {
+        brand: current.brand,
+        model: current.model,
+        ram: current.ram,
+        style: current.style,
+        pref: current.pref,
+        finger: current.finger,
+        score: current.score,
+        knownModel: current.knownModel
+          ? {
+              name: current.knownModel.name,
+              brand: current.knownModel.brand,
+              adjustment: current.knownModel.adjustment
+            }
+          : null,
+        v: {
+          general: current.v.general,
+          reddot: current.v.reddot,
+          x2: current.v.x2,
+          x4: current.v.x4,
+          sniper: current.v.sniper,
+          freelook: current.v.freelook
+        }
+      }
+    : null
+})
       });
       const data = await res.json();
 
