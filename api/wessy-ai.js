@@ -266,8 +266,7 @@ function smartFallback(message, context, knowledge) {
   }
 
   if (
-    /(current|meri|my|mine).*(sensitivity|sens)|
-       (sensitivity|sens).*(current|meri|my|mine)/x.test(q)
+    /(current|meri|my|mine).*(sensitivity|sens)|(sensitivity|sens).*(current|meri|my|mine)/.test(q)
   ) {
     if (context?.v) {
       return (
